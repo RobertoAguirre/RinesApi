@@ -9,7 +9,7 @@ const getAllRims = (req, res) => {
     Rim.find().then(rims => {
         res.status(200).json({
             message: "Rims fetched successfully!",
-            posts: rims
+            results: rims
         });
     });
 }
