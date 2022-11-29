@@ -8,6 +8,7 @@ const dotenv = require('dotenv');
 const authRouter = require('./routes/authRoutes');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
+const rimsRouter = require('./routes/rimsRoutes');
 
 
 
@@ -43,7 +44,7 @@ app.use((req,res, next)=>{
 app.use('/api/v1/auth',authRouter);
 app.use('/api/v1/tours',tourRouter);
 app.use('/api/v1/users',userRouter);
-
+app.use('/api/v1/users',rimsRouter);
 
 /* app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
