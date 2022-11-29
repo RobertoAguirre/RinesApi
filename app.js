@@ -3,8 +3,8 @@ const morgan = require('morgan');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const cors = require("cors");
+const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-
 const authRouter = require('./routes/authRoutes');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
@@ -44,7 +44,7 @@ app.use((req,res, next)=>{
 app.use('/api/v1/auth',authRouter);
 app.use('/api/v1/tours',tourRouter);
 app.use('/api/v1/users',userRouter);
-app.use('/api/v1/users',rimsRouter);
+app.use('/api/v1/rims',rimsRouter);
 
 /* app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
@@ -52,6 +52,15 @@ app.use('/api/v1/users',rimsRouter);
     res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,PATCH,OPTIONS");
     next();
 }); */
+
+const DB = process.env.DATABASE_LOCAL;
+mongoose.connect(DB, {
+    useNewUrlParser: true
+}).then(con => {
+    console.log(con.connections);
+    console.log("Db connection successfull!");
+});
+
 
 //4) start server
 const port = 3000;

@@ -24,4 +24,4 @@ const rimSchema = new mongoose.Schema({
     }
 });
 
-const Rim = mongoose.model('Rim',rimSchema);
+module.exports = mongoose.model('Rim',rimSchema);

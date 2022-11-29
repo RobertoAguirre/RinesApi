@@ -5,7 +5,9 @@ const http = require("http");
 dotenv.config({ path: './config.env' });
 const Rim = require('./routes/authRoutes');
 
-const DB = process.env.DATABASE.replace('<PASSWORD>', process.env.DATABASE_PASSWORD);
+//const DB = process.env.DATABASE.replace('<PASSWORD>', process.env.DATABASE_PASSWORD);
+
+const DB = process.env.DATABASE_LOCAL;
 
 //for connecting to the local database: mongoose.connect(print.env.DATABASE_LOCAL, {
 
