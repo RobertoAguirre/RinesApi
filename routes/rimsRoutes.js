@@ -6,33 +6,27 @@ const Rim = require('../models/rim.js');
 
 const getAllRims = (req, res) => {
     console.log(req.requestTime);
-    res.status(200).json({
-        status: 'success',
-        requestedAt: req.requestTime,
-        results: rims.length,
-        data: {
-            rims
-        }
+    Rim.find().then(rims => {
+        res.status(200).json({
+            message: "Rims fetched successfully!",
+            posts: rims
+        });
     });
 }
 
 const getRim = (req, res) => {
     console.log(req.params);
-    const id = req.params.id * 1;
-    const rims = rims.find(el => el.id === id);
-    if (!rims) {
-        return res.status(404).json({
-            status: 'fail',
-            message: 'Invalid Id'
-        })
-    }
+    //const _sku = req.params.id * 1;
+    const _sku = req.params.sku;
 
-    res.status(200).json({
-        status: 'success',
-        data: {
-            rim
-        }
+    Rim.find({ sku: _sku }).then(rims => {
+        res.status(200).json({
+            message: "Rims fetched successfully!",
+            rims: rims
+        });
     });
+
+
 }
 
 const createRim = (req, res) => {
@@ -55,7 +49,7 @@ const createRim = (req, res) => {
                 postId: createRim._id
             });
 
-        }else{
+        } else {
             res.status(500).json({
                 message: "Error saving rim"
             });
@@ -68,31 +62,57 @@ const createRim = (req, res) => {
 
 }
 
-const updateRims = (req, res) => {
-    if (req.params.id * 1 > rims.length) {
-        return res.status(404).json({
-            status: 'fail',
-            message: 'invalid id'
-        })
-    }
-    res.status(200).json({
-        status: 'success',
-        data: '<Updated rim here...>'
-    });
+const updateRim = (req, res) => {
+    /*   if (req.params.id * 1 > rims.length) {
+          return res.status(404).json({
+              status: 'fail',
+              message: 'invalid id'
+          })
+      }
+      res.status(200).json({
+          status: 'success',
+          data: '<Updated rim here...>'
+      }); */
+    let data = req.body;  
+
+    return Rim.updateOne(
+        { sku: req.params.sku },
+        {
+            $set: {
+                sku: data.sku,
+                modelname: data.modelname,
+                description: data.description,
+                brand: data.brand
+            }
+
+        }
+    ).then(result => {
+        res.status(200).json({ message: "Rim updated successfully!" });
+    })
 }
 
 
 
 const deleteRim = (req, res) => {
-    if (req.params.id * 1 > rims.length) {
-        return res.status(404).json({
-            status: 'fail',
-            message: 'invalid id'
-        })
-    }
-    res.status(204).json({
-        status: 'success',
-        data: null
+    /*     if (req.params.id * 1 > rims.length) {
+            return res.status(404).json({
+                status: 'fail',
+                message: 'invalid id'
+            })
+        }
+        res.status(204).json({
+            status: 'success',
+            data: null
+        }); */
+
+    console.log(req.params);
+    //const _sku = req.params.id * 1;
+    const _sku = req.params.sku;
+
+    Rim.deleteOne({ sku: _sku }).then(rims => {
+        res.status(200).json({
+            message: "Rim deleted successfully!",
+        });
     });
 }
 
@@ -105,9 +125,9 @@ router
     .post(createRim);
 
 router
-    .route('/:id')
+    .route('/:sku')
     .get(getRim)
-    .patch(updateRims)
+    .patch(updateRim)
     .delete(deleteRim);
 
 module.exports = router;
