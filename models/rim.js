@@ -21,6 +21,10 @@ const rimSchema = new mongoose.Schema({
     brand:{
         type:String,
         required: [true,'A tour must have a brand'] //with this you set that the brand
+    },
+    photo:{
+        type:String,
+        required:false
     }
 });
 

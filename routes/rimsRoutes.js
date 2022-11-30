@@ -1,8 +1,39 @@
 const express = require('express');
 const Rim = require('../models/rim.js');
+const multer = require('multer');
 
 
-//const rims = JSON.parse();
+const multerStorage = multer.diskStorage({
+    destination: (req,file,cb)=>{
+        cb(null,'public/img/rims');
+    },
+    filename:(req,file,cb)=>{
+        
+        const fileextension = file.mimetype.split('/')[1];
+        cb(null,`rim-${req.body.sku}-${Date.now()}.${fileextension}`);
+
+    }
+});
+
+//filter so you upload only images
+const multerFilter = (req,file,cb)=>{
+    if(file.mimetype.startsWith('image')){
+        cb(null,true);
+    }else{
+        cb("not an image",false);
+    }
+};
+
+
+
+//setup file upload
+/* const upload = multer({ dest: 'public/img/rims' }) */
+const upload = multer({ 
+    storage:multerStorage,
+    fileFilter:multerFilter
+});
+//exports.uploadRimPhoto = upload.single('photo');
+
 
 const getAllRims = (req, res) => {
     console.log(req.requestTime);
@@ -37,7 +68,8 @@ const createRim = (req, res) => {
         sku: data.sku,
         modelname: data.modelname,
         description: data.description,
-        brand: data.brand
+        brand: data.brand,
+        photo: req.file !== undefined? req.file.filename:""
     });
 
     rim.save().then(createdRim => {
@@ -63,17 +95,8 @@ const createRim = (req, res) => {
 }
 
 const updateRim = (req, res) => {
-    /*   if (req.params.id * 1 > rims.length) {
-          return res.status(404).json({
-              status: 'fail',
-              message: 'invalid id'
-          })
-      }
-      res.status(200).json({
-          status: 'success',
-          data: '<Updated rim here...>'
-      }); */
-    let data = req.body;  
+
+    let data = req.body;
 
     return Rim.updateOne(
         { sku: req.params.sku },
@@ -91,6 +114,28 @@ const updateRim = (req, res) => {
     })
 }
 
+const updateRimWithPhoto = (req, res) => {
+    console.log(req.file);
+    console.log(req.body);
+
+    let data = req.body;
+
+    return Rim.updateOne(
+        { sku: req.params.sku },
+        {
+            $set: {
+                sku: data.sku,
+                modelname: data.modelname,
+                description: data.description,
+                brand: data.brand,
+                photo: req.file.filename
+            }
+
+        }
+    ).then(result => {
+        res.status(200).json({ message: "Rim updated successfully!" });
+    })
+}
 
 
 const deleteRim = (req, res) => {
@@ -122,13 +167,20 @@ const router = express.Router();
 router
     .route('/')
     .get(getAllRims)
-    .post(createRim);
+    .post(upload.single('photo'),createRim);
 
 router
     .route('/:sku')
     .get(getRim)
     .patch(updateRim)
     .delete(deleteRim);
+
+//'photo' is the field in the form that is uploading the image
+/* router..route('/updateRimWithPhoto')
+    .patch(upload.single('photo'), updateRimWithPhoto);
+ */
+
+router.put('/updateRimWithPhoto', upload.single('photo'), updateRimWithPhoto);
 
 module.exports = router;
 
