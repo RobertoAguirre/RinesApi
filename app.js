@@ -9,7 +9,7 @@ const authRouter = require('./routes/authRoutes');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const rimsRouter = require('./routes/rimsRoutes');
-
+const brandsRouter = require('./routes/brandRoutes');
 
 
 const app = express();
@@ -45,6 +45,7 @@ app.use('/api/v1/auth',authRouter);
 app.use('/api/v1/tours',tourRouter);
 app.use('/api/v1/users',userRouter);
 app.use('/api/v1/rims',rimsRouter);
+app.use('/api/v1/brands',brandsRouter);
 
 /* app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
