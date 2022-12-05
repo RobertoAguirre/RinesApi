@@ -155,6 +155,7 @@ const deleteRim = (req, res) => {
     const _sku = req.params.sku;
 
     Rim.deleteOne({ sku: _sku }).then(rims => {
+        console.log("deleted");
         res.status(200).json({
             message: "Rim deleted successfully!",
         });
