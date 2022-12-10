@@ -1,6 +1,9 @@
 const express = require('express');
 const User = require('../models/user.js');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
+const jwtkey = process.env.JWT_KEY;
 
 
 const createUser = (req, res) => {
@@ -38,9 +41,68 @@ const createUser = (req, res) => {
 
 }
 
+const authenticate = (req, res) => {
+    let data = req.body;
+    User.findOne({ "username": data.username }).then(user => {
+        if (user) {
+            let passInTheDatabase = user.password;
+            bcrypt.compare(data.password, passInTheDatabase, function (err, _res) {
+                if (user) {
+                    if (_res===false) {
+                        res.send("user not found");
+                    } else {
+                        const payload = {
+                            user: user
+                        };
+
+                        const token = jwt.sign(payload, jwtkey, {
+                            expiresIn: 1440  //token expiration period
+                        });
+                        res.status(200).json({
+                            acceso: true,
+                            mensaje: 'Autenticación correcta',
+                            token: token,
+                            id: user._id,
+                            username:user.username
+                        });
+
+
+                    }
+                } else {
+                    res.status(401).json({
+                        acceso: false,
+                        mensaje: "Usuario o contraseña incorrectos"
+                    });
+
+                }
+
+            })
+
+
+        } else {
+
+            res.status(401).json({
+                acceso: false,
+                mensaje: "Usuario o contraseña incorrectos"
+            });
+
+
+
+        }
+
+    }, (err, res) => {
+        console.log(err);
+        res.status(401).json({
+            acceso: false,
+            mensaje: "Usuario o contraseña incorrectos"
+        });
+
+    })
+};
+
 const getAllUsers = (req, res) => {
     console.log(req.requestTime);
-    User.find({},{username:1,role:1}).then(users => {
+    User.find({}, { username: 1, role: 1 }).then(users => {
         res.status(200).json({
             message: "Users fetched successfully!",
             results: users
@@ -86,7 +148,7 @@ const updateUserPassword = (req, res) => {
 
     let data = req.body;
 
-    
+
 
     bcrypt.hash(data.password, 10, async function (err, hash) {
 
@@ -127,6 +189,8 @@ router
     .route('/')
     .get(getAllUsers)
     .post(createUser);
+
+router.route('/authenticate').post(authenticate);
 
 router
     .route('/:id')
