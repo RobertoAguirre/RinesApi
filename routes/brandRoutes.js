@@ -1,7 +1,9 @@
 const express = require('express');
 const Brand = require('../models/brand.js');
 const multer = require('multer');
+const jwt = require('jsonwebtoken');
 
+const jwtkey = process.env.JWT_KEY;
 
 const multerStorage = multer.diskStorage({
     destination: (req,file,cb)=>{
@@ -24,6 +26,30 @@ const multerFilter = (req,file,cb)=>{
     }
 };
 
+//middleware for jwt authentication
+
+const rutasProtegidas = express.Router();
+rutasProtegidas.use((req, res, next) => {
+    const token = req.headers['authorization'];
+
+    if (token) {
+        jwt.verify(token, jwtkey, (err, decoded) => {
+            if (err) {
+                return res.json({ mensaje: 'Token inválida' });
+            } else {
+                req.decoded = decoded;
+                next();
+            }
+        });
+    } else {
+        res.send(401, 'Token no provista');
+        /*   res.send({
+              mensaje: 'Token no provista.'
+          }); */
+    }
+});
+
+///
 
 
 //setup file upload
@@ -149,7 +175,7 @@ const router = express.Router();
 
 router
     .route('/')
-    .get(getAllBrands)
+    .get(rutasProtegidas,getAllBrands)
     .post(upload.single('brandlogo'),createBrand);
 
 router

@@ -63,6 +63,7 @@ const authenticate = (req, res) => {
                             mensaje: 'Autenticación correcta',
                             token: token,
                             id: user._id,
+                            role: user.role,
                             username:user.username
                         });
 
@@ -81,7 +82,8 @@ const authenticate = (req, res) => {
 
         } else {
 
-            res.status(401).json({
+            res.json({
+                status:401,
                 acceso: false,
                 mensaje: "Usuario o contraseña incorrectos"
             });
