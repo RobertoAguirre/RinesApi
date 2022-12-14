@@ -43,11 +43,52 @@ const getAllPrinters = (req, res) => {
 }
 
 const printInDefaultPrinter = (req, res) => {
+    let currentPrinters = [];
+    currentPrinters = ptp.getPrinters().then(console.log);
+    const options = {
+        printer: currentPrinters[0].deviceId    ,
+        scale: "fit",
+      };
+
+      print("assets/pdf-sample.pdf", options).then(console.log);
+
     console.log(req.requestTime);
 }
 
-const printInSpecificPrinter = (req, res) => {
+const printInGreenLabel = (req, res) => {
 
+    let currentPrinters = [];
+    currentPrinters = ptp.getPrinters().then((res)=>{
+        currentPrinters = res;
+        console.log(res);    
+        
+        let options = {
+            printer: currentPrinters[2],
+            scale: "fit",
+        }
+        ptp.print("assets/pdf-sample.pdf", options).then(console.log);
+
+    })
+    /*
+
+      print("assets/pdf-sample.pdf", options).then(console.log);
+
+    console.log(req.requestTime);*/
+}
+
+
+const printOrangeLabel = (req, res) => {
+
+    let currentPrinters = [];
+    currentPrinters = ptp.getPrinters().then(console.log);
+    const options = {
+        printer: currentPrinters[0].deviceId    ,
+        scale: "fit",
+      };
+
+      print("assets/pdf-sample.pdf", options).then(console.log);
+
+    console.log(req.requestTime);
 
 }
 
@@ -87,6 +128,9 @@ const router = express.Router();
 router
     .route('/')
     .get(getAllPrinters);
+
+router.get('/printgreenlabel', printInGreenLabel);
+router.get('/printorangelabel', printOrangeLabel);        
    // .post(upload.single('photo'), createRim);
 
 /* router
