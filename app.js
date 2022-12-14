@@ -56,7 +56,8 @@ app.use('/api/v1/print',printerRouter);
     next();
 }); */
 
-const DB = process.env.DATABASE_LOCAL;
+//const DB = process.env.DATABASE_LOCAL;
+const DB = process.env.DATABASE;
 mongoose.connect(DB, {
     useNewUrlParser: true
 }).then(con => {

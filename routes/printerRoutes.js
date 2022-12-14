@@ -39,7 +39,7 @@ const upload = multer({
 
 const getAllPrinters = (req, res) => {
     console.log(req.requestTime);
-    ptp.getPrinters();
+    ptp.getPrinters().then(console.log);
 }
 
 const printInDefaultPrinter = (req, res) => {
