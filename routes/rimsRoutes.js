@@ -45,6 +45,18 @@ const getAllRims = (req, res) => {
     });
 }
 
+const getRimsByBrand = (req, res) => {
+    console.log(req.requestTime);
+    
+    const _brand = req.params.brand.toUpperCase();
+    Rim.find({brand:_brand}).then(rims => {
+        res.status(200).json({
+            message: "Rims fetched successfully!",
+            results: rims
+        });
+    });
+}
+
 const getRim = (req, res) => {
     console.log(req.params);
     //const _sku = req.params.id * 1;
@@ -64,36 +76,48 @@ const createRim = (req, res) => {
 
     let data = req.body;
 
-    const rim = new Rim({
-        sku: data.sku,
-        modelname: data.modelname,
-        description: data.description,
-        partsupl: data.partsupl,
-        serial: data.serial,
-        datemfg: data.datemfg,
-        qty: data.qty,
-        brand: data.brand,
-        photo: req.file !== undefined ? req.file.filename : ""
-    });
-
-    rim.save().then(createdRim => {
-
-        console.log(createdRim._id);
-        if (createRim) {
-            res.status(201).json({
-                message: "Rim added successfully",
-                postId: createRim._id
-            });
-
+    Rim.exists({ serial: data.serial }, (err, doc) => {
+        if (err) {
+            console.log(err)
         } else {
-            res.status(500).json({
-                message: "Error saving rim"
-            });
+            console.log("Result :", doc) // true
+            if (doc === null) {
+                const rim = new Rim({
+                    sku: data.sku,
+                    modelname: data.modelname,
+                    description: data.description,
+                    partsupl: data.partsupl,
+                    serial: data.serial,
+                    datemfg: data.datemfg,
+                    qty: data.qty,
+                    brand: data.brand,
+                    photo: req.file !== undefined ? req.file.filename : ""
+                });
+
+                rim.save().then(createdRim => {
+
+                    console.log(createdRim._id);
+                    if (createRim) {
+                        res.status(201).json({
+                            message: "Rim added successfully",
+                            postId: createRim._id
+                        });
+
+                    } else {
+                        res.status(500).json({
+                            message: "Error saving rim"
+                        });
+                    }
+
+                })
+
+            }else{
+                res.status(200).json({
+                    message: "Rim already exists"
+                });
+            }
         }
-
     })
-
-
 
 
 }
@@ -187,6 +211,8 @@ router
     .get(getRim)
     .patch(updateRim)
     .delete(deleteRim);
+
+router.get('/getRimsByBrand/:brand',getRimsByBrand);
 
 //'photo' is the field in the form that is uploading the image
 /* router..route('/updateRimWithPhoto')

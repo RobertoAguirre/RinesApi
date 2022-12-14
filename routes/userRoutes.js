@@ -201,16 +201,7 @@ const deleteUser = (req, res) => {
         });
     });
 
-/*     console.log(req.params);
-    //const _sku = req.params.id * 1;
-    const _id = req.params.id;
 
-    User.deleteOne({ _id: _id }).then(users => {
-        console.log("deleted");
-        res.status(200).json({
-            message: "User deleted successfully!",
-        });
-    }); */
 };
 
 
