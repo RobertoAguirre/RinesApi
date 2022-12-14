@@ -4,23 +4,23 @@ const multer = require('multer');
 
 
 const multerStorage = multer.diskStorage({
-    destination: (req,file,cb)=>{
-        cb(null,'public/img/rims');
+    destination: (req, file, cb) => {
+        cb(null, 'public/img/rims');
     },
-    filename:(req,file,cb)=>{
-        
+    filename: (req, file, cb) => {
+
         const fileextension = file.mimetype.split('/')[1];
-        cb(null,`rim-${req.body.sku}-${Date.now()}.${fileextension}`);
+        cb(null, `rim-${req.body.sku}-${Date.now()}.${fileextension}`);
 
     }
 });
 
 //filter so you upload only images
-const multerFilter = (req,file,cb)=>{
-    if(file.mimetype.startsWith('image')){
-        cb(null,true);
-    }else{
-        cb("not an image",false);
+const multerFilter = (req, file, cb) => {
+    if (file.mimetype.startsWith('image')) {
+        cb(null, true);
+    } else {
+        cb("not an image", false);
     }
 };
 
@@ -28,9 +28,9 @@ const multerFilter = (req,file,cb)=>{
 
 //setup file upload
 /* const upload = multer({ dest: 'public/img/rims' }) */
-const upload = multer({ 
-    storage:multerStorage,
-    fileFilter:multerFilter
+const upload = multer({
+    storage: multerStorage,
+    fileFilter: multerFilter
 });
 //exports.uploadRimPhoto = upload.single('photo');
 
@@ -68,8 +68,12 @@ const createRim = (req, res) => {
         sku: data.sku,
         modelname: data.modelname,
         description: data.description,
+        partsupl: data.partsupl,
+        serial: data.serial,
+        datemfg: data.datemfg,
+        qty: data.qty,
         brand: data.brand,
-        photo: req.file !== undefined? req.file.filename:""
+        photo: req.file !== undefined ? req.file.filename : ""
     });
 
     rim.save().then(createdRim => {
@@ -105,7 +109,11 @@ const updateRim = (req, res) => {
                 sku: data.sku,
                 modelname: data.modelname,
                 description: data.description,
-                brand: data.brand
+                partsupl: data.partsupl,
+                serial: data.serial,
+                datemfg: data.datemfg,
+                qty: data.qty,
+                brand: data.brand,
             }
 
         }
@@ -127,6 +135,10 @@ const updateRimWithPhoto = (req, res) => {
                 sku: data.sku,
                 modelname: data.modelname,
                 description: data.description,
+                partsupl: data.partsupl,
+                serial: data.serial,
+                datemfg: data.datemfg,
+                qty: data.qty,
                 brand: data.brand,
                 photo: req.file.filename
             }
@@ -168,7 +180,7 @@ const router = express.Router();
 router
     .route('/')
     .get(getAllRims)
-    .post(upload.single('photo'),createRim);
+    .post(upload.single('photo'), createRim);
 
 router
     .route('/:sku')

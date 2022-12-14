@@ -15,7 +15,7 @@ const brandsRouter = require('./routes/brandRoutes');
 const app = express();
 
 app.use(morgan('dev'));
-app.use(express.json());
+app.use(express.json({limit: '50mb'}));
 app.use(express.static(`${__dirname}/public`));
 
 app.set('jwtkey', process.env.JWT_KEY);
@@ -40,7 +40,7 @@ app.use((req,res, next)=>{
     next();
 })
 
-//3)routes
+//3)routes 
 app.use('/api/v1/auth',authRouter);
 app.use('/api/v1/tours',tourRouter);
 app.use('/api/v1/users',userRouter);

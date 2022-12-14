@@ -3,6 +3,8 @@ const Brand = require('../models/brand.js');
 const multer = require('multer');
 const jwt = require('jsonwebtoken');
 
+const { default: mongoose } = require('mongoose');
+
 const jwtkey = process.env.JWT_KEY;
 
 const multerStorage = multer.diskStorage({
@@ -74,9 +76,10 @@ const getAllBrands = (req, res) => {
 const getBrand = (req, res) => {
     console.log(req.params);
     //const _sku = req.params.id * 1;
-    const _id = req.params.sku;
+    let _brand = req.params.id;
+    _brand = _brand.toUpperCase();
 
-    Brand.find({ id: _id }).then(brands => {
+    Brand.find({ brand: _brand }).then(brands => {
         res.status(200).json({
             message: "Brands fetched successfully!",
             brands: brands
@@ -91,7 +94,7 @@ const createBrand = (req, res) => {
     let data = req.body;
 
     const brand = new Brand({
-        brand: data.brand,
+        brand: data.brand.toUpperCase(),
         brandlogo: req.file !== undefined? req.file.filename:""
     });
 
@@ -111,10 +114,6 @@ const createBrand = (req, res) => {
         }
 
     })
-
-
-
-
 }
 
 const updateBrand = (req, res) => {
@@ -161,9 +160,10 @@ const deleteBrand = (req, res) => {
 
     console.log(req.params);
     //const _sku = req.params.id * 1;
-    const id = req.params.id;
+    const id = mongoose.Types.ObjectId(req.params.id);
+    
 
-    Brand.deleteOne({ _id: id }).then(brands => {
+    Brand.findByIdAndRemove(id).then(brands => {
         res.status(200).json({
             message: "Brand deleted successfully!",
         });
@@ -175,11 +175,11 @@ const router = express.Router();
 
 router
     .route('/')
-    .get(rutasProtegidas,getAllBrands)
+    .get(getAllBrands)
     .post(upload.single('brandlogo'),createBrand);
 
 router
-    .route('/:sku')
+    .route('/:id')
     .get(getBrand)
     .patch(updateBrand)
     .delete(deleteBrand);
