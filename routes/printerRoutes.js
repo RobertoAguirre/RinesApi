@@ -73,7 +73,7 @@ const  printInGreenLabel = (req, res) => {
             await ptp.print(pathtofile, options).then(console.log);
 
         }catch(err){
-            console.log("some shit" + err);
+            console.log("Error" + err);
         }
  
     })
