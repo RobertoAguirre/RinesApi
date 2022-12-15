@@ -55,19 +55,27 @@ const printInDefaultPrinter = (req, res) => {
     console.log(req.requestTime);
 }
 
-const printInGreenLabel = (req, res) => {
+const  printInGreenLabel = (req, res) => {
 
     let currentPrinters = [];
-    currentPrinters = ptp.getPrinters().then((res)=>{
+    currentPrinters = ptp.getPrinters().then(async (res)=>{
         currentPrinters = res;
         console.log(res);    
         
         let options = {
-            printer: currentPrinters[2],
+            printer: currentPrinters[1].name,
             scale: "fit",
         }
-        ptp.print("assets/pdf-sample.pdf", options).then(console.log);
+        try{
+            //C:\Users\rober\Repos\RinesApi\RinesApi\routes\pdf-sample.pdf
+            let pathtofile =`C:\\Users\\rober\\Repos\\RinesApi\\RinesApi\\routes\\pdf-sample.pdf`;
+            console.log(pathtofile);
+            await ptp.print(pathtofile, options).then(console.log);
 
+        }catch(err){
+            console.log("some shit" + err);
+        }
+ 
     })
     /*
 
@@ -86,7 +94,7 @@ const printOrangeLabel = (req, res) => {
         scale: "fit",
       };
 
-      print("assets/pdf-sample.pdf", options).then(console.log);
+      print("../assets/pdf-sample.pdf", options).then(console.log);
 
     console.log(req.requestTime);
 
