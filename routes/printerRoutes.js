@@ -7,23 +7,25 @@ const path = require('path');
 
 const multerStorage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'public/img/rims');
+        cb(null, 'routes/pdfs');
     },
     filename: (req, file, cb) => {
 
         const fileextension = file.mimetype.split('/')[1];
-        cb(null, `rim-${req.body.sku}-${Date.now()}.${fileextension}`);
+        cb(null, `labelpdf.${fileextension}`);
 
     }
 });
 
 //filter so you upload only images
 const multerFilter = (req, file, cb) => {
-    if (file.mimetype.startsWith('image')) {
-        cb(null, true);
-    } else {
-        cb("not an image", false);
-    }
+    cb(null, true);
+    
+    // if (file.mimetype.startsWith('image')) {
+    //     cb(null, true);
+    // } else {
+    //     cb("not an image", false);
+    // }
 };
 
 
@@ -55,7 +57,7 @@ const printInDefaultPrinter = (req, res) => {
     console.log(req.requestTime);
 }
 
-const  printInGreenLabel = (req, res) => {
+const  printGreenLabel = (req, res) => {
 
     let currentPrinters = [];
     currentPrinters = ptp.getPrinters().then(async (res)=>{
@@ -68,7 +70,12 @@ const  printInGreenLabel = (req, res) => {
         }
         try{
             //C:\Users\rober\Repos\RinesApi\RinesApi\routes\pdf-sample.pdf
-            let pathtofile =`C:\\Users\\rober\\Repos\\RinesApi\\RinesApi\\routes\\pdf-sample.pdf`;
+            //let pathtofile =`C:\\Users\\rober\\Repos\\RinesApi\\RinesApi\\routes\\labelpdf.pdf`;
+            //let pathtofile = `..\\public\\pdfs\\labelpdf.pdf`;
+            
+            let pathtofile =  `${__dirname}\\pdfs\\labelpdf.pdf`;
+
+            
             console.log(pathtofile);
             await ptp.print(pathtofile, options).then(console.log);
 
@@ -137,8 +144,8 @@ router
     .route('/')
     .get(getAllPrinters);
 
-router.get('/printgreenlabel', printInGreenLabel);
-router.get('/printorangelabel', printOrangeLabel);        
+router.post('/printgreenlabel',upload.single('pdf'), printGreenLabel);        
+router.post('/printorangelabel',upload.single('pdf'), printOrangeLabel);        
    // .post(upload.single('photo'), createRim);
 
 /* router
