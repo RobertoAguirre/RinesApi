@@ -38,6 +38,10 @@ const rimSchema = new mongoose.Schema({
         type: String,
         required: [true, 'A rim must have a brand'] //with this you set that the brand
     },
+    labelColor: {
+        type: String,
+        required: [true, 'A rim must have a label color'] //with this you set that the brand
+    },
     brandlogo: {
         type: String,
         required: false

@@ -91,6 +91,7 @@ const createRim = (req, res) => {
                     datemfg: data.datemfg,
                     qty: data.qty,
                     brand: data.brand,
+                    labelColor:data.labelColor,
                     photo: req.file !== undefined ? req.file.filename : ""
                 });
 
