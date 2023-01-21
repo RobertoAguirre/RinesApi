@@ -48,7 +48,7 @@ const printInDefaultPrinter = (req, res) => {
     let currentPrinters = [];
     currentPrinters = ptp.getPrinters().then(console.log);
     const options = {
-        printer: currentPrinters[0].deviceId    ,
+        printer: currentPrinters[0].deviceId,
         scale: "fit",
       };
 
@@ -102,7 +102,7 @@ const printOrangeLabel = (req, res) => {
         
         let options = {
             printer: currentPrinters[0].name,
-            scale: "fit",
+            scale: "fit"
         }
         try{
   
