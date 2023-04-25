@@ -92,7 +92,9 @@ const createRim = (req, res) => {
                     qty: data.qty,
                     brand: data.brand,
                     labelColor:data.labelColor,
+                    favorite:data.favorite,
                     photo: req.file !== undefined ? req.file.filename : ""
+                    
                 });
 
                 rim.save().then(createdRim => {
@@ -139,6 +141,7 @@ const updateRim = (req, res) => {
                 datemfg: data.datemfg,
                 qty: data.qty,
                 brand: data.brand,
+                favorite:data.favorite
             }
 
         }
@@ -165,7 +168,8 @@ const updateRimWithPhoto = (req, res) => {
                 datemfg: data.datemfg,
                 qty: data.qty,
                 brand: data.brand,
-                photo: req.file.filename
+                photo: req.file.filename,
+                favorite:data.favorite
             }
 
         }
@@ -173,6 +177,26 @@ const updateRimWithPhoto = (req, res) => {
         res.status(200).json({ message: "Rim updated successfully!" });
     })
 }
+
+const updateFavorite = (req, res) => {
+    const sku = req.params.sku;
+    const favorite = req.params.favorite;
+  
+    Rim.updateOne(
+      { sku: sku },
+      {
+        $set: {
+          favorite: favorite,
+        },
+      }
+    )
+      .then(result => {
+        res.status(200).json({ message: "Rim favorite value updated successfully!" });
+      })
+      .catch(error => {
+        res.status(500).json({ message: "Error updating rim favorite value", error });
+      });
+  };
 
 
 const deleteRim = (req, res) => {
@@ -205,7 +229,11 @@ const router = express.Router();
 router
     .route('/')
     .get(getAllRims)
-    .post(upload.single('photo'), createRim);
+    .post(upload.single('photo'),(req,res,next)=>{
+        console.log("File",req.file);
+        console.log("Body",req.body);
+        next();
+    }, createRim);
 
 router
     .route('/:sku')
@@ -213,6 +241,7 @@ router
     .patch(updateRim)
     .delete(deleteRim);
 
+router.put('/favorite/:sku',updateFavorite);
 router.get('/getRimsByBrand/:brand',getRimsByBrand);
 
 //'photo' is the field in the form that is uploading the image
@@ -220,7 +249,11 @@ router.get('/getRimsByBrand/:brand',getRimsByBrand);
     .patch(upload.single('photo'), updateRimWithPhoto);
  */
 
-router.put('/updateRimWithPhoto', upload.single('photo'), updateRimWithPhoto);
+router.put('/updateRimWithPhoto', upload.single('photo'),(req,res,next)=>{
+    console.log("File",req.file);
+    console.log("Body",req.body);
+    next();
+}, updateRimWithPhoto);
 
 module.exports = router;
 

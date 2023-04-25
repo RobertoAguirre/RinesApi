@@ -49,6 +49,10 @@ const rimSchema = new mongoose.Schema({
     photo: {
         type: String,
         required: false
+    },
+    favorite:{
+        type:Boolean,
+        required:false
     }
 });
 
